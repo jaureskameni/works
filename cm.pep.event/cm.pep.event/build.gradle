@@ -1,0 +1,76 @@
+
+buildscript {
+	dependencies {
+		classpath("org.openapitools:openapi-generator-gradle-plugin:7.1.0")
+	}
+}
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.3'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id "org.openapi.generator" version "7.1.0"
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+ext {
+	set('mapstructVersion', "1.5.5.Final")
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	runtimeOnly 'org.postgresql:postgresql'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	//openApi
+	implementation('io.swagger:swagger-annotations:1.6.8')
+	implementation('org.openapitools:jackson-databind-nullable:0.2.3')
+	implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2')
+
+	// Lombok
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+	testCompileOnly("org.projectlombok:lombok")
+	testAnnotationProcessor("org.projectlombok:lombok")
+
+	// Mapstruct
+	implementation("org.mapstruct:mapstruct:${mapstructVersion}")
+	annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+	testAnnotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+
+openApiGenerate {
+	generatorName = "spring"
+	templateDir = "cm.pep.event/openapi/templates/spring-boot".toString()
+	inputSpec = "cm.pep.event/openapi/main.yaml".toString()
+	outputDir = layout.buildDirectory.file("generated/sources/openapi").get().asFile.path
+	apiPackage = "cm.pep.event.api"
+	modelPackage = "cm.pep.event.dto"
+	configOptions = [
+			dateLibrary         : "java8-localdatetime",
+			library             : "spring-boot",
+			interfaceOnly       : "true",
+			useTags             : "true",
+			skipDefaultInterface: "true",
+			useSpringBoot3      : "true"
+	]
+	typeMappings = [
+			time: "java.time.LocalTime",
+	]
+}
+
+compileJava.dependsOn(tasks.openApiGenerate)
+
+sourceSets.main.java.srcDir layout.buildDirectory.file("generated/sources/openapi/src/main/java").get().asFile.path

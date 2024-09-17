@@ -1,0 +1,237 @@
+openapi: 3.0.3
+info:
+  title: TIME TABLE Rest API
+  description: REST API endpoints for time management
+  version: 2024-v1
+servers:
+  - url: 'http'
+paths:
+  /RegisterUser:
+    post:
+      tags:
+        - User
+      summary: register a new user
+      description: register a new user
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+
+  /LoginUser:
+    post:
+      tags:
+        - User
+      summary: login user
+      description: login user
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDto'
+      responses:
+        204:
+          description: User logged is successfully
+        400:
+          description: USER-4001
+
+  /event:
+    post:
+      tags:
+        - Event
+      summary: add the event
+      description: add the event
+      operationId: addEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddEventDto'
+      responses:
+        200:
+          description: Event created is successfully
+          content:
+            application/json:
+              schema:
+               type: string
+               format: uuid
+
+  /fetchEvent:
+    get:
+      tags:
+        - Event
+      summary: get all event
+      description: get all event
+      operationId: getAllEvent
+      parameters:
+        - name: fieldsToExtractCode
+          in: query
+          required: true
+          schema:
+            type: string
+          description: specify the fields that will be present on the response
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventDTO'
+  /fetchEvent/{day}:
+    get:
+      tags:
+        - Event
+      summary: get event by day
+      operationId: get event by day
+      parameters:
+        - name: day
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+            description: event day to be fetch
+        - name: fieldsToExtractCode
+          in: query
+          required: true
+          schema:
+            type: string
+            description: specify the fields that will be present on the response
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventDTO'
+
+components:
+  schemas:
+    LoginUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          description: email of the user
+        password:
+          type: string
+          description: password of the user
+
+    RegisterUserDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: first name of the user
+        lastName:
+          type: string
+          description: last name of the user
+        birthDay:
+          type: string
+          format: date
+        email:
+          type: string
+          description: email of the user
+        password:
+          type: string
+          description: password of the user
+
+    EventDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          description: title of the event
+        description:
+          type: string
+          description: description of the event
+        star_time:
+          type: string
+          format: date
+          description: event start date
+        end_time:
+          type: string
+          format: date
+          description: event end date
+        location:
+          type: string
+          description: event location
+        user:
+          $ref: '#/components/schemas/UserDto'
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantDto'
+
+    AddEventDto:
+      type: object
+      required:
+        - title
+        - description
+        - star_time
+        - end_time
+        - location
+        - user
+        - participants
+      properties:
+        title:
+          type: string
+          description: title of the event
+        description:
+          type: string
+          description: description of the event
+        star_time:
+          type: string
+          format: 'date-time'
+          description: event start date
+        end_time:
+          type: string
+          format: 'date-time'
+          description: event end date
+        location:
+          type: string
+          description: event location
+        user:
+          $ref: '#/components/schemas/UserDto'
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantDto'
+
+    UserDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: first name of user
+        lastName:
+          type: string
+          description: last name of the user
+
+    ParticipantDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: it is the User's ID

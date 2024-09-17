@@ -75,7 +75,7 @@ class ManagementServiceImplTest {
                 .password("123")
                 .build();
 
-        User user = User.builder()
+        User user = Useru.builder()
                 .email("jaureskameni@gmail.com")
                 .password("123")
                 .build();

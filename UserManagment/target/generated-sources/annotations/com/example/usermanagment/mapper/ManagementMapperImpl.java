@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-08-12T15:35:16+0100",
+    date = "2024-08-26T17:17:22+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 22.0.1 (Oracle Corporation)"
 )
 @Component
@@ -19,13 +19,13 @@ public class ManagementMapperImpl implements ManagementMapper {
             return null;
         }
 
-        User.UserBuilder user = User.builder();
+        User user = new User();
 
-        user.username( userDto.getUsername() );
-        user.email( userDto.getEmail() );
-        user.password( userDto.getPassword() );
+        user.setUsername( userDto.getUsername() );
+        user.setEmail( userDto.getEmail() );
+        user.setPassword( userDto.getPassword() );
 
-        return user.build();
+        return user;
     }
 
     @Override

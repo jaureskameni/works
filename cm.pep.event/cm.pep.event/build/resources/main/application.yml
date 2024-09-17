@@ -1,0 +1,14 @@
+  spring:
+    application:
+      name: even
+
+    datasource:
+      url: jdbc:postgresql://localhost:5432/db_even
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
+
+    jpa:
+      hibernate:
+        ddl-auto: create-drop
+      show-sql: true

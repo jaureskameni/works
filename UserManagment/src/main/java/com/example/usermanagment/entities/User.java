@@ -3,28 +3,50 @@ package com.example.usermanagment.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Entity
-@Table(name = "t_user")
+
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "u_id")
-    private Integer id;
 
-    @Column(name = "user_name")
-    private String username;
-
-    @Column(name = "u_email")
-    private String email;
-
-    @Column(name = "u_password")
-    private String password;
+    private Integer id = 2;
 
 
+    private String username = "jaures";
+
+
+    private String email = "fgyqdgyu@gmai.com";
+
+
+    private String password = "password";
+
+    public void setPassword(String Newpassword) {
+        this.password = Newpassword;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }

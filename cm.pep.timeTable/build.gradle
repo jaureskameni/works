@@ -1,0 +1,128 @@
+
+//openapi
+buildscript {
+	dependencies {
+		classpath("org.openapitools:openapi-generator-gradle-plugin:7.1.0")
+	}
+}
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.3'
+	id 'io.spring.dependency-management' version '1.1.6'
+	//openapi
+	id "org.openapi.generator" version "7.1.0"
+	//spotless
+	id 'com.diffplug.spotless' version '6.25.0' apply false
+}
+
+version = '0.0.1-SNAPSHOT'
+apply plugin: 'com.diffplug.spotless'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+ext {
+	set('mapstructVersion', "1.5.5.Final")
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// OPENAPI
+	implementation('io.swagger:swagger-annotations:1.6.8')
+	implementation('org.openapitools:jackson-databind-nullable:0.2.3')
+	implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2')
+
+	// JUnit - Utilise une version compatible avec ta version de Spring Boot
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+
+	// Spring Boot WebFlux Starter
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// Optionnel : Inclut spring-boot-starter-test pour avoir les dépendances de test compatibles avec Spring Boot
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// Lombok
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+	testCompileOnly("org.projectlombok:lombok")
+	testAnnotationProcessor("org.projectlombok:lombok")
+
+	// Mapstruct
+	implementation("org.mapstruct:mapstruct:${mapstructVersion}")
+	annotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+	testAnnotationProcessor("org.mapstruct:mapstruct-processor:${mapstructVersion}")
+
+	//validator email
+	implementation 'commons-validator:commons-validator:1.7'
+
+
+}
+
+tasks.named('test', Test) {
+	useJUnitPlatform()
+}
+
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = "$rootDir/openapi/main.yaml".toString()
+	outputDir = layout.buildDirectory.file("generated/sources/openapi").get().asFile.path
+	apiPackage = "cm.pep.timeTable.api"
+	modelPackage = "cm.pep.timeTable.dto"
+	configOptions = [
+		dateLibrary         : "java8-localdatetime",
+		library             : "spring-boot",
+		interfaceOnly       : "true",
+		useTags             : "true",
+		skipDefaultInterface: "true",
+		useSpringBoot3      : "true"
+	]
+	typeMappings = [
+		time: "java.time.LocalTime",
+	]
+}
+
+compileJava.dependsOn(tasks.openApiGenerate)
+
+sourceSets.main.java.srcDir layout.buildDirectory.file("generated/sources/openapi/src/main/java").get().asFile.path
+
+spotless {
+	java {
+		googleJavaFormat('1.22.0')
+				.reflowLongStrings()
+				.formatJavadoc(true)
+				.reorderImports(true)
+				.groupArtifact('com.google.googlejavaformat:google-java-format')
+	}
+	groovyGradle {
+		target '*.gradle'
+		greclipse()
+	}
+	format 'xml', {
+		target 'src/**/*.xml'
+		eclipseWtp('xml')
+	}
+}
+
