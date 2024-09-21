@@ -61,7 +61,9 @@ class EventServiceTest {
         UUID expectedId = UUID.randomUUID();
         String title = "title";
         String description = "description";
+        String civility = "M";
         Event evenToSave = mock(Event.class);
+
         EventData eventData =
                 EventData.builder()
                         .title(title)
@@ -69,6 +71,7 @@ class EventServiceTest {
                         .end_time(LocalDateTime.now())
                         .start_time(LocalDateTime.of(2024,12,7,13,0))
                         .location("douala")
+                        .civility(civility)
                         .participants(List.of(p1,p2,p3))
                         .build();
 

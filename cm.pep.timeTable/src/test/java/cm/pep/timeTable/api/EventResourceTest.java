@@ -39,7 +39,7 @@ class EventResourceTest {
                 .uri(
                         uriBuilder ->
                                 uriBuilder
-                                        .path("/event")
+                                        .path("/event/create")
                                         .build())
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(eventDto)

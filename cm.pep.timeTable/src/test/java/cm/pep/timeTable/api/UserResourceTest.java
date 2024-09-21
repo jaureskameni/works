@@ -40,7 +40,7 @@ class UserResourceTest extends ResourceTest {
                 .uri(
                         uriBuilder ->
                                 uriBuilder
-                                        .path("/RegisterUser")
+                                        .path("/user/register")
                                         .build())
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(registerUserDto)
@@ -68,7 +68,7 @@ class UserResourceTest extends ResourceTest {
                 .uri(
                         uriBuilder ->
                                 uriBuilder
-                                        .path("/LoginUser")
+                                        .path("/user/login")
                                         .build())
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(loginUserDto)

@@ -23,6 +23,7 @@ public interface EventMapper {
     @Mapping(target= "start_time", source = "starTime")
     @Mapping(target= "end_time", source = "endTime")
     @Mapping(target= "location", source = "location")
+    @Mapping(target= "civility", source = "civility")
     @Mapping(target = "participants", source = "participants")
         EventData FromDtoToData(AddEventDto eventDto);
 

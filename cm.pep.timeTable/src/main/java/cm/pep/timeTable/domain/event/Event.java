@@ -1,13 +1,8 @@
 package cm.pep.timeTable.domain.event;
 
-import cm.pep.timeTable.domain.event.embeded.EventDescription;
-import cm.pep.timeTable.domain.event.embeded.EventId;
-import cm.pep.timeTable.domain.event.embeded.EventLocation;
-import cm.pep.timeTable.domain.event.embeded.EventTitle;
+import cm.pep.timeTable.domain.event.embeded.*;
 import cm.pep.timeTable.domain.participant.Participation;
 import cm.pep.timeTable.domain.participant.embadded.ParticipationId;
-import cm.pep.timeTable.domain.user.FirstName;
-import cm.pep.timeTable.domain.user.LastName;
 import cm.pep.timeTable.domain.user.User;
 import cm.pep.timeTable.domain.user.UserID;
 import jakarta.persistence.*;
@@ -54,6 +49,10 @@ public class Event {
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "c_location"))
     private EventLocation location;
+
+    @Column(name = "c_civility")
+    @Enumerated(EnumType.STRING)
+    private Civility civility;
 
     @ManyToOne
     @MapsId("userId")

@@ -14,5 +14,6 @@ public record EventData(
         LocalDateTime start_time,
         LocalDateTime end_time,
         String location,
+        String civility,
         List<UUID> participants
         ) {}

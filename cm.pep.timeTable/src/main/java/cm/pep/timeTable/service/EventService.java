@@ -1,11 +1,9 @@
 package cm.pep.timeTable.service;
 
 import cm.pep.timeTable.domain.event.Event;
-import cm.pep.timeTable.domain.event.EventData;
 import cm.pep.timeTable.domain.event.EventFactory;
 import cm.pep.timeTable.domain.event.embeded.EventId;
 import cm.pep.timeTable.domain.user.User;
-import cm.pep.timeTable.domain.user.UserID;
 import cm.pep.timeTable.dto.AddEventDto;
 import cm.pep.timeTable.mapper.EventMapper;
 import cm.pep.timeTable.repository.EventSpringRepository;
@@ -14,7 +12,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,7 +21,6 @@ public class EventService {
 
     private final EventMapper mapper;
     private final EventFactory factory;
-    private final EventSpringRepository repository;
     private final UserSpringRepository userSpringRepository;
     private final EventSpringRepository eventSpringRepository;
 
