@@ -8,8 +8,11 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +22,15 @@ import java.util.function.Function;
 public class JwtService {
 
     // chaîne encodée en Base64 qui représente la clé secrète utilisée pour signer les JWT
-    private static  final String SECRET_KEY = "2qLKC828b=BWTTj3IFdvBSa5Q/nnZk3WdfZIOl=XUzV1Fv-Y1l51OBfX5K-Mw9urK8LEFy1FM6!/72sytKgC8J-JhdpyDmt=MH7cZ0TTZFIM4L?HDMDIUqtDVKzNK=?B3/Ml8sR!=ivb1i5ODH6l/59BmX9TsQWkkZ6uK2UtFL!zL/kKUN44zBb5i?meO3yxnr17lSd7hliweeL!YN9YxONLzK9=CFcbsdAEuCEOv4cNufGeQITdHoV99lO997!L";
+    private static String SECRET_KEY = "2qLKC828b=BWTTj3IFdvBSa5Q/nnZk3WdfZIOl=XUzV1Fv-Y1l51OBfX5K-Mw9urK8LEFy1FM6!/72sytKgC8J-JhdpyDmt=MH7cZ0TTZFIM4L?HDMDIUqtDVKzNK=?B3/Ml8sR!=ivb1i5ODH6l/59BmX9TsQWkkZ6uK2UtFL!zL/kKUN44zBb5i?meO3yxnr17lSd7hliweeL!YN9YxONLzK9=CFcbsdAEuCEOv4cNufGeQITdHoV99lO997!L";
 
+    public JwtService() throws NoSuchAlgorithmException {
+        KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+        SecretKey secretKey = keyGen.generateKey();
+        SECRET_KEY = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+    }
     // pour decoder la cle de signature (SECRET_key) utilise pour signer les JWT
-    private Key getSignInKey() {
+    private SecretKey getSignInKey() {
 
         //décode scret_KEY en un tableau d'octets (byte[])
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
@@ -40,14 +48,14 @@ public class JwtService {
                 décode et vérifie un JWT pour extraire et
                 valider les revendications (claims) qu'il contient*/
 
-                .parserBuilder() //creation du parser
-                .setSigningKey(getSignInKey()) /*Configure le parseur JWT avec la clé de signature.
+                .parser() //creation du parser
+                .verifyWith(getSignInKey()) /*Configure le parseur JWT avec la clé de signature.
                                                  Cela permet au parseur de vérifier la signature
                                                      du token pour s'assurer qu'il est authentique.*/
                 .build()
-                .parseClaimsJws(token)/*analyse le token pour extraire ses composants  et
+                .parseSignedClaims(token)/*analyse le token pour extraire ses composants  et
                                         verifie que le token n'a pas été modifie depuis sa création*/
-                .getBody();// le parser extrait toute les informations du token
+                .getPayload();// le parser extrait toute les informations du token
 
     }
 
@@ -78,11 +86,13 @@ public class JwtService {
     ){
         return Jwts
                 .builder() //pour creer le token
-                .setClaims(extractClaims) //definir les claims a inclure dans le token
-                .setSubject(userDetails.getUsername()) //pour definir le User auquel le token appartient
-                .setIssuedAt(new Date(System.currentTimeMillis()))//defini la date d'emision du token
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))// defini la date d'expiration du token
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)//Spécifie la clé utilisée pour signer le token et l'algorithme de signature.
+                .claims()
+                .add(extractClaims) //definir les claims a inclure dans le token
+                .subject(userDetails.getUsername()) //pour definir le User auquel le token appartient
+                .issuedAt(new Date(System.currentTimeMillis()))//defini la date d'emision du token
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))// defini la date d'expiration du token
+                .and()
+                .signWith(getSignInKey())//Spécifie la clé utilisée pour signer le token et l'algorithme de signature.
                 .compact();//token final construit
     }
 

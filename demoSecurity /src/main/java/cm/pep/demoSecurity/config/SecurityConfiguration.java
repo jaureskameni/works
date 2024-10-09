@@ -23,7 +23,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        httpSecurity
+        return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)  // Désactivation de CSRF
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**")  // Routes publiques
@@ -35,8 +35,7 @@ public class SecurityConfiguration {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // Gestion de session sans état
                 )
                 .authenticationProvider(authenticationProvider)  // Fournisseur d'authentification
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);  // Ajout du filtre JWT
-
-        return httpSecurity.build();
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();  // Ajout du filtre JWT
     }
 }

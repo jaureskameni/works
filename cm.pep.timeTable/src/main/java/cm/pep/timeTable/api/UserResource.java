@@ -4,6 +4,7 @@ import cm.pep.timeTable.dto.LoginUserDto;
 import cm.pep.timeTable.dto.RegisterUserDto;
 import java.util.UUID;
 
+import cm.pep.timeTable.dto.UserDto;
 import cm.pep.timeTable.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,9 +18,9 @@ public class UserResource implements UserApi {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<Void> loginUser(LoginUserDto loginUserDto) {
-        userService.loginUser(loginUserDto);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<UserDto> loginUser(LoginUserDto loginUserDto) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.loginUser(loginUserDto));
     }
 
     @Override

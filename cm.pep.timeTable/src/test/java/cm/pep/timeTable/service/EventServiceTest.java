@@ -4,7 +4,7 @@ import cm.pep.timeTable.domain.event.Event;
 import cm.pep.timeTable.domain.event.EventData;
 import cm.pep.timeTable.domain.event.EventFactory;
 import cm.pep.timeTable.domain.event.embeded.EventId;
-import cm.pep.timeTable.domain.user.User;
+import cm.pep.timeTable.domain.user.UserEvent;
 import cm.pep.timeTable.domain.user.UserID;
 import cm.pep.timeTable.dto.AddEventDto;
 import cm.pep.timeTable.dto.ParticipantDto;
@@ -22,11 +22,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.WeakHashMap;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class EventServiceTest {
@@ -75,7 +73,7 @@ class EventServiceTest {
                         .participants(List.of(p1,p2,p3))
                         .build();
 
-        User user = mock(User.class);
+        UserEvent userEvent = mock(UserEvent.class);
         UserID userID = mock(UserID.class);
         EventId eventId = mock(EventId.class);
         UserDto userDto = mock(UserDto.class);
@@ -96,10 +94,10 @@ class EventServiceTest {
 
         when(eventDto.getUser()).thenReturn(userDto);
         when(userDto.getFirstName()).thenReturn(firsName);
-        when(userSpringRepository.findByFirstName(firsName)).thenReturn(Optional.of(user));
+        when(userSpringRepository.findByFirstName(firsName)).thenReturn(Optional.of(userEvent));
 
 
-        when(user.getId()).thenReturn(userID);
+        when(userEvent.getId()).thenReturn(userID);
         when(mapper.FromDtoToData(eventDto)).thenReturn(eventData);
         when(eventFactory.createEvent(eventData, userID)).thenReturn(evenToSave);
         when(mapper.FromDtoToData(eventDto)).thenReturn(eventData);

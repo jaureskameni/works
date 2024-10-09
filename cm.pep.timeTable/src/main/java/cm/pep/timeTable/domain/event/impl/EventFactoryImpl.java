@@ -4,14 +4,9 @@ import cm.pep.timeTable.domain.event.Event;
 import cm.pep.timeTable.domain.event.EventData;
 import cm.pep.timeTable.domain.event.EventFactory;
 import cm.pep.timeTable.domain.event.embeded.EventDescription;
-import cm.pep.timeTable.domain.event.embeded.EventId;
 import cm.pep.timeTable.domain.event.embeded.EventLocation;
 import cm.pep.timeTable.domain.event.embeded.EventTitle;
-import cm.pep.timeTable.domain.participant.Participation;
-import cm.pep.timeTable.domain.participant.embadded.ParticipationId;
-import cm.pep.timeTable.domain.user.FirstName;
-import cm.pep.timeTable.domain.user.LastName;
-import cm.pep.timeTable.domain.user.User;
+import cm.pep.timeTable.domain.user.UserEvent;
 import cm.pep.timeTable.domain.user.UserID;
 import cm.pep.timeTable.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +27,7 @@ public class EventFactoryImpl implements EventFactory {
                         .start_time(eventData.start_time())
                         .end_time(eventData.end_time())
                         .location(new EventLocation(eventData.location()))
-                        .event_creator(User.builder()
+                        .event_creator(UserEvent.builder()
                                 .id(userID)
                                 .build())
                         .build();

@@ -2,7 +2,7 @@ package cm.pep.timeTable.domain.participant;
 
 import cm.pep.timeTable.domain.event.Event;
 import cm.pep.timeTable.domain.participant.embadded.ParticipationId;
-import cm.pep.timeTable.domain.user.User;
+import cm.pep.timeTable.domain.user.UserEvent;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +26,7 @@ public class Participation {
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "c_user", referencedColumnName = "c_id")
-    private User user;
+    private UserEvent userEvent;
 
     @ManyToOne
     @MapsId("eventId")

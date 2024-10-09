@@ -2,6 +2,7 @@ package cm.pep.timeTable.api;
 
 import cm.pep.timeTable.dto.LoginUserDto;
 import cm.pep.timeTable.dto.RegisterUserDto;
+import cm.pep.timeTable.dto.UserDto;
 import cm.pep.timeTable.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @WebFluxTest(UserResource.class)
-class UserResourceTest extends ResourceTest {
+class UserEventResourceTest extends ResourceTest {
 
     @MockBean
     private UserService userService;
@@ -61,7 +62,8 @@ class UserResourceTest extends ResourceTest {
         //Given
         LoginUserDto loginUserDto = mock(LoginUserDto.class);
 
-        doNothing().when(userService).loginUser(loginUserDto);
+        UserDto userDto = mock(UserDto.class);
+        when(userService.loginUser(loginUserDto)).thenReturn(userDto);
         //When
         webTestClient
                 .post()
@@ -74,7 +76,10 @@ class UserResourceTest extends ResourceTest {
                 .bodyValue(loginUserDto)
                 .exchange()
                 .expectStatus()
-                .isNoContent();
+                .isOk()
+                .expectBody(UserDto.class)
+                .returnResult()
+                .getResponseBody();
     }
 
 

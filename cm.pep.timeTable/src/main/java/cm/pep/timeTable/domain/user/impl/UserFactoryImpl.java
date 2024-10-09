@@ -12,12 +12,12 @@ public class UserFactoryImpl implements UserFactory {
     private final UserSpringRepository repository;
 
     @Override
-    public User registerUser(UserData userData) {
+    public UserEvent registerUser(UserData userData) {
         if (repository.findByEmail(userData.email()).isPresent()){
             throw new RuntimeException("User Already Exist");
         }
         return repository.save(
-                User.builder()
+                UserEvent.builder()
                         .firstName(new FirstName(userData.firstName()))
                         .lastName(new LastName(userData.lastName()))
                         .birthDay(userData.birthDay())
@@ -28,13 +28,13 @@ public class UserFactoryImpl implements UserFactory {
     }
 
     @Override
-    public User loginUser(UserData userData) {
-        User user = repository.findByEmail(userData.email())
+    public UserEvent loginUser(UserData userData) {
+        UserEvent userEvent = repository.findByEmail(userData.email())
                 .orElseThrow(() -> new RuntimeException("User does not exist"));
 
-        if (!user.getPassword().getValue().equals(userData.password())) {
+        if (!userEvent.getPassword().equals(userData.password())) {
                 throw new RuntimeException("Invalid Password");
             }
-            return user;
+            return userEvent;
         }
 }

@@ -3,7 +3,7 @@ package cm.pep.timeTable.domain.event;
 import cm.pep.timeTable.domain.event.embeded.*;
 import cm.pep.timeTable.domain.participant.Participation;
 import cm.pep.timeTable.domain.participant.embadded.ParticipationId;
-import cm.pep.timeTable.domain.user.User;
+import cm.pep.timeTable.domain.user.UserEvent;
 import cm.pep.timeTable.domain.user.UserID;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -57,7 +57,7 @@ public class Event {
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "c_user_creator", referencedColumnName = "c_id")
-    private User event_creator;
+    private UserEvent event_creator;
 
     @Builder.Default
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "event")
@@ -70,7 +70,7 @@ public class Event {
                                 Participation.builder()
                                         .id(new ParticipationId(new UserID(participantId), this.id))
                                         .event(this)
-                                        .user(User.builder().id(new UserID(participantId)).build())
+                                        .userEvent(UserEvent.builder().id(new UserID(participantId)).build())
                                         .build()
                         )
                 );

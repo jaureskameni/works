@@ -1,9 +1,10 @@
 package cm.pep.timeTable.mapper;
 
 import cm.pep.timeTable.domain.user.impl.Email;
-import cm.pep.timeTable.domain.user.User;
+import cm.pep.timeTable.domain.user.UserEvent;
 import cm.pep.timeTable.dto.LoginUserDto;
 import cm.pep.timeTable.dto.RegisterUserDto;
+import cm.pep.timeTable.dto.UserDto;
 import cm.pep.timeTable.util.data.UserData;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.mapstruct.*;
@@ -19,7 +20,7 @@ public interface UserMapper {
     @Mapping(target = "lastName", source = "lastName.value")
     @Mapping(target = "email", source = "email", qualifiedByName = "emailToString")
     @Mapping(target = "birthDay", source = "birthDay")
-    RegisterUserDto fromEntityToDto(User user);
+    RegisterUserDto fromEntityToDto(UserEvent userEvent);
 
     @Named("emailToString")
     default String emailToString(Email email){
@@ -35,6 +36,16 @@ public interface UserMapper {
     UserData fromDtoToData(RegisterUserDto registerUserDto);
 
     @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "firstName.value", target = "firstName")
+    @Mapping(source = "lastName.value", target = "lastName")
+    UserDto fromEntityToDto2(UserEvent userEvent);
+
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(source = "email", target = "email", qualifiedByName = "StringToEmail")
+    @Mapping(source = "password", target = "password")
+    UserData fromDtoToData(LoginUserDto loginUserDto);
+
+    @BeanMapping(ignoreByDefault = true)
     @Mapping(source = "password", target = "password")
     @Mapping(source = "email", target = "email", qualifiedByName = "StringToEmail")
     UserData fieldToExtract1(LoginUserDto loginUserDto);
@@ -46,4 +57,6 @@ public interface UserMapper {
         }
         return new Email(email);
     }
+
+
 }

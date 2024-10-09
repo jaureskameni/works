@@ -4,7 +4,7 @@ package cm.pep.timeTable.domain.user;
 import cm.pep.timeTable.util.data.UserData;
 
 public interface UserFactory {
-   User registerUser(UserData userData);
+   UserEvent registerUser(UserData userData);
 
-   User loginUser(UserData userData);
+   UserEvent loginUser(UserData userData);
 }

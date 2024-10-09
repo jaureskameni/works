@@ -1,7 +1,7 @@
 package cm.pep.timeTable.domain.impl;
 
 import cm.pep.timeTable.domain.user.Password;
-import cm.pep.timeTable.domain.user.User;
+import cm.pep.timeTable.domain.user.UserEvent;
 import cm.pep.timeTable.domain.user.impl.Email;
 import cm.pep.timeTable.domain.user.impl.UserFactoryImpl;
 import cm.pep.timeTable.repository.UserSpringRepository;
@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserFactoryImplTest {
+class UserEventFactoryImplTest {
 
     @InjectMocks
     private UserFactoryImpl objectUnderTest;
@@ -43,7 +43,7 @@ class UserFactoryImplTest {
                 .email(email)
                 .password(password)
                 .build();
-        User expectedUser = mock(User.class);
+        UserEvent expectedUserEvent = mock(UserEvent.class);
 
         when(repository.findByEmail(userData.email())).thenReturn(Optional.empty());
 
@@ -56,9 +56,9 @@ class UserFactoryImplTest {
                             assertThat(user)
                                     .returns(firstName, user1 -> user1.getFirstName().getValue())
                                     .returns(lastName, user1 -> user1.getLastName().getValue())
-                                    .returns(birthDay, User::getBirthDay)
-                                    .returns(email, User::getEmail)
-                                    .returns(password, user1 -> user1.getPassword().getValue());
+                                    .returns(birthDay, UserEvent::getBirthDay)
+                                    .returns(email, UserEvent::getEmail)
+                                    .returns(password, UserEvent::getPassword);
                         }));
     }
 
@@ -69,17 +69,17 @@ class UserFactoryImplTest {
                 .password("jaures")
                 .email(new Email("www.jaureskameni@gmail.com"))
                 .build();
-        User userToLogin =User.builder()
+        UserEvent userEventToLogin = UserEvent.builder()
                 .password(new Password("jaures"))
                 .email(new Email("www.jaureskameni@gmail.com"))
                 .build();
 
-        when(repository.findByEmail(userData.email())).thenReturn(Optional.of(userToLogin));
+        when(repository.findByEmail(userData.email())).thenReturn(Optional.of(userEventToLogin));
 
-        User resultUnderTest = objectUnderTest.loginUser(userData);
+        UserEvent resultUnderTest = objectUnderTest.loginUser(userData);
 
-        assertThat(resultUnderTest.getEmail()).isEqualTo(userToLogin.getEmail());
-        assertThat(resultUnderTest.getPassword()).isEqualTo(userToLogin.getPassword());
+        assertThat(resultUnderTest.getEmail()).isEqualTo(userEventToLogin.getEmail());
+        assertThat(resultUnderTest.getPassword()).isEqualTo(userEventToLogin.getPassword());
     }
 
 }

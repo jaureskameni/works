@@ -3,7 +3,7 @@ package cm.pep.timeTable.service;
 import cm.pep.timeTable.domain.event.Event;
 import cm.pep.timeTable.domain.event.EventFactory;
 import cm.pep.timeTable.domain.event.embeded.EventId;
-import cm.pep.timeTable.domain.user.User;
+import cm.pep.timeTable.domain.user.UserEvent;
 import cm.pep.timeTable.dto.AddEventDto;
 import cm.pep.timeTable.mapper.EventMapper;
 import cm.pep.timeTable.repository.EventSpringRepository;
@@ -26,11 +26,11 @@ public class EventService {
 
     @Transactional
     public UUID createEvent(AddEventDto eventDto) {
-        Optional<User>  userOptional = userSpringRepository.findByFirstName(eventDto.getUser().getFirstName());
+        Optional<UserEvent>  userOptional = userSpringRepository.findByFirstName(eventDto.getUser().getFirstName());
         if (userOptional.isEmpty()){
             throw new RuntimeException("User does not exist");
         }
-        User user = userOptional.get();
+        UserEvent userEvent = userOptional.get();
 
         eventDto.getParticipants()
                 .forEach(
@@ -44,7 +44,7 @@ public class EventService {
 
         return Optional.of(eventDto)
                 .map(mapper::FromDtoToData)
-                .map(eventData -> factory.createEvent(eventData, user.getId()))
+                .map(eventData -> factory.createEvent(eventData, userEvent.getId()))
                 .map(event -> event.createEvent(mapper.FromDtoToData(eventDto)))
                 .map(eventSpringRepository::save)
                 .map(Event::getId)
