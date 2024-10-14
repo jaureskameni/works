@@ -1,6 +1,7 @@
 package com.knj.SpringSecurity.payload.request;
 
 import com.knj.SpringSecurity.enums.Role;
+import com.knj.SpringSecurity.validation.StrongPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,7 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank(message = "password is required")
-    @Stron
+    @StrongPassword
     private String password;
 
     @NotNull

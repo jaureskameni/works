@@ -18,6 +18,7 @@ public class RefreshTokenResponse {
     private String accessToken;
     @JsonProperty("refresh_token")
     private String refreshToken;
+    @Builder.Default
     @JsonProperty("token_type")
     private String tokenType = TokenType.BEARAR.name();
 }

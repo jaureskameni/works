@@ -36,10 +36,9 @@ public class RefreshToken {
     @Column(name = "c_expiryDate")
     private Instant expiryDate;
 
-    @Column(name = "c_revoked")
-    private Boolean revoked;
-
     @ManyToAny
     @JoinColumn(name = "user_id", referencedColumnName = "c_user_id")
     private User user;
+
+    private Boolean revoked;
 }

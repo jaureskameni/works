@@ -18,7 +18,7 @@ import java.util.List;
 public class AuthenticationResponse {
     private Long id;
     private String email;
-    private List<Role> roles;
+    private List<String> roles;
 
     @JsonProperty("access_token")
     private String accessToken;
