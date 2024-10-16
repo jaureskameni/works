@@ -1,0 +1,30 @@
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/db_security
+    username: kameni
+    password: guimel
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    server:
+      port: 8085
+
+#    application:
+#      security:
+#        jwt:
+#          secret-key: 0811c40bb1a4e87f12752cfccb1522d9785749090ca0b9cc7af3fd056be40a3a
+#          expiration: 900000 #  15 min in ms
+#            cookie-name: jwt-cookie
+#          refresh-token:
+#            expiration: 1296000000 # 15 days in ms
+#            cookie-name: refresh-jwt-cookie
+
