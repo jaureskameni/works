@@ -21,27 +21,29 @@ import java.time.Instant;
 //gestion des erreurs liees a l'authentification
 public class Http401UnauthorizedEntryPoint implements AuthenticationEntryPoint {
     @Override//cette methode est appelee lorsque l'autheentification echoue
-    public void commence(HttpServletRequest request, //requete entrante
-                         HttpServletResponse response, // reponse a envoye au client
-                         AuthenticationException authException // exception levee
+    public void commence(
+            HttpServletRequest request, //requete entrante
+            HttpServletResponse response, // reponse a envoye au client
+            AuthenticationException authException // exception levee
     ) throws IOException, ServletException {
         log.error("Unauthorize error: {}", authException.getMessage()); //enregistre le message d'erreur dans les logs
 
-        //configuration de lareponse
+        //configuration de la reponse
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); //type du contenu de la reponse
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //statu HTTP de la reponse
 
-        //creation du code d'erreur present dans la reponse
+        //pour encapsuler les détails de l'erreur.
         ErrorResponse body = ErrorResponse.builder()
                 .status(HttpServletResponse.SC_UNAUTHORIZED) //status HTTP
                 .error("Unauthorized") //description de l'erreur
-                .timeStamp(Instant.now()) // instant de production de l'erreur
+                .timeStamp(Instant.now()) // instant de production de l'erreur en millisecond
                 .path(request.getServletPath()) //chemin de la requete responsable de l'erreur
                 .build();
 
         final ObjectMapper mapper = new ObjectMapper(); //objet utilise pour convertir un objet JAVA en JSON (inversement)
         mapper.registerModule(new JavaTimeModule()); //module pour correctement mapper les objets lies au temps
-        mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);//configure le mapper pour afficher les dates de facon lisible
-        mapper.writeValue(response.getOutputStream(), body);
+        mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);//configure le mapper pour afficher les dates de facon lisible YY-MM-DD
+        mapper.writeValue(response.getOutputStream(), body);// Cette ligne sérialise l'objet body en JSON et l'écrit directement dans le flux de sortie de la réponse HTTP
+                                                            // body = object java qui contient des informations sur l'erreur rencontrée (statut HTTP, message d'erreur, timestamp, etc.)
     }
 }
