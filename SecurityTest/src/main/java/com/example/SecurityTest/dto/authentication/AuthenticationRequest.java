@@ -1,20 +1,19 @@
-package com.example.SecurityTest.domain.register;
+package com.example.SecurityTest.dto.authentication;
 
-import com.example.SecurityTest.domain.RoleName;
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Embeddable
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class RegisterRequest {
+public class AuthenticationRequest {
     private String username;
-    private String email;
     private String password;
-    private RoleName role;
 }

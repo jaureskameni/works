@@ -1,19 +1,19 @@
 package com.example.SecurityTest.domain.embedded;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.UUID;
 
+@EqualsAndHashCode
 @Builder
 @Getter
 @Embeddable
 @NoArgsConstructor
-public class UserId {
+public class UserId implements Serializable {
     @NonNull
     @Builder.Default
     private String value = UUID.randomUUID().toString();

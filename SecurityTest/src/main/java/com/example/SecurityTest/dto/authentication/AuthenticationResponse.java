@@ -1,4 +1,4 @@
-package com.example.SecurityTest.domain.authentication;
+package com.example.SecurityTest.dto.authentication;
 
 import com.example.SecurityTest.domain.RoleName;
 import com.example.SecurityTest.domain.embedded.UserId;
@@ -20,8 +20,8 @@ import java.util.Set;
 public class AuthenticationResponse {
     private UserId id;
 
-    private String email;
-    private Set<String> password;
+    private String username;
+    private Set<String> roles;
 
     private String accessToken;
     private String refreshToken;

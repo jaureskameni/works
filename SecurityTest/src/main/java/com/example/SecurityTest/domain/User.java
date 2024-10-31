@@ -56,7 +56,10 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "t_role", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(
+            name = "t_role",
+            joinColumns = @JoinColumn(name = "c_user", referencedColumnName = "c_id"))
+    @Column(name = "c_role")
     private Set<RoleName> roles;
 
     @Override
