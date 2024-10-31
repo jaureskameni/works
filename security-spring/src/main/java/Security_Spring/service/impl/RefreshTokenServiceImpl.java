@@ -10,9 +10,13 @@ import Security_Spring.repositories.RefreshTokenSpringRepository;
 import Security_Spring.repositories.UserSpringRepository;
 import Security_Spring.service.JwtService;
 import Security_Spring.service.RefreshTokenService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 import java.time.Instant;
 import java.util.Base64;
@@ -26,21 +30,20 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenSpringRepository tokenSpringRepository;
     private final JwtService jwtService;
 
+    String refreshTokenName = "refresh-jwt-cookie";
+
     @Override
     public RefreshToken createRefreshToken(Long userId) {
 
         long refreshExpiration = 1296000000; //duree d'expiration du refreshToken(15jrs en millisecondes)
-
         var user = userSpringRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User Not Found !!!"));
-
         var refreshToken = RefreshToken.builder()
                 .revoked(false)
                 .user(user)
                 .token(Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes()))
                 .expiryDate(Instant.now().plusMillis(refreshExpiration))
                 .build();
-
         return tokenSpringRepository.save(refreshToken);
     }
 
@@ -68,6 +71,41 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .accessToken(newToken)
                 .refreshToken(refreshTokenRequest.getRefreshToken())
                 .tokenType(TokenType.BEARER.name())
+                .build();
+    }
+
+    @Override
+    public ResponseCookie generateRefreshTokenCookie(String token) {
+        long refreshExpiration = 1296000000L;
+        return ResponseCookie.from(refreshTokenName, token)
+                .path("/")
+                .maxAge(refreshExpiration/1000) // 15 days in seconds
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .build();    }
+
+    @Override
+    public String getRefreshTokenFromCookies(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, refreshTokenName);
+        if (cookie != null) {
+            return cookie.getValue();
+        } else {
+            return "";
+        }
+    }
+
+    @Override
+    public void deleteByToken(String token) {
+        tokenSpringRepository.findByToken(token).ifPresent(tokenSpringRepository::delete);
+    }
+
+    @Override
+    public ResponseCookie getCleanRefreshTokenCookie() {
+        return ResponseCookie.from(refreshTokenName, "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)
                 .build();
     }
 }

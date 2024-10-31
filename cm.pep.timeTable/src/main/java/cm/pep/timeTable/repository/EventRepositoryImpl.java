@@ -11,7 +11,7 @@ public class EventRepositoryImpl implements EventRepository {
     private final EventSpringRepository repository;
 
     @Override
-    public Event save(Event event) {
+    public Event    save(Event event) {
         return repository.save(event);
     }
 }

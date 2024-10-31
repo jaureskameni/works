@@ -22,5 +22,6 @@ public class RefreshTokenResponse {
     @JsonProperty("refresh")
     private String refreshToken;
     @JsonProperty("token_type")
+    @Builder.Default
     private String tokenType = TokenType.BEARER.name();
 }

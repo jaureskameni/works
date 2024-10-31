@@ -7,7 +7,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -42,6 +41,27 @@ public class JwtServiceImpl implements JwtService {
         return generateToken(new HashMap<>(), userDetails);
     }
 
+    private String generateToken(Map<String, Object> extractClaims, UserDetails userDetails){
+        long jwtExpiration = 900000;
+        return buildToken(extractClaims, userDetails, jwtExpiration);
+    }
+
+    private String buildToken(
+            Map<String, Object> extractClaims,
+            UserDetails userDetails,
+            long expiration){
+        return Jwts
+                .builder()
+                .claims()
+                .add(extractClaims)
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .and()
+                .signWith(getSigningKey())
+                .compact();
+    }
+
     @Override
     public boolean isValid(String token, UserDetails userDetails) {
         final String username = extractUserName(token);
@@ -50,7 +70,13 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public ResponseCookie generateJwtCookie(String jwt) {
-        return null;
+        return ResponseCookie.from(jwtCookieName, jwt)
+                .path("/")
+                .maxAge(24 * 60 * 60) // 24 hours
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .build();
     }
 
     private boolean isTokenExpired(String token){
@@ -59,11 +85,6 @@ public class JwtServiceImpl implements JwtService {
 
     private Date extractExpiration(String token){
         return extractClaims(token, Claims::getExpiration);
-    }
-
-    private String generateToken(Map<String, Object> extractClaims, UserDetails userDetails){
-        long jwtExpiration = 900000;
-        return buildToken(extractClaims, userDetails, jwtExpiration);
     }
 
     private <T> T extractClaims(String token, Function<Claims, T> claimsTResolvers){
@@ -78,23 +99,6 @@ public class JwtServiceImpl implements JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-    }
-
-    private String buildToken(
-            Map<String, Object> extractClaims,
-            UserDetails userDetails,
-            long expiration
-    ){
-        return Jwts
-                .builder()
-                .claims()
-                .add(extractClaims)
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .and()
-                .signWith(getSigningKey())
-                .compact();
     }
 
     private SecretKey getSigningKey(){
