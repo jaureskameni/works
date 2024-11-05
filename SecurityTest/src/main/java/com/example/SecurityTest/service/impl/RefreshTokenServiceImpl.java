@@ -27,7 +27,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final UserSpringRepository userSpringRepository;
     private final JwtService jwtService;
     @Value("${application.security.jwt.refresh-token.expiration}")
-    private final Long expiration;
+    private Long expiration;
 
     @Override
     public RefreshToken generateRefreshToken(UserId id) {

@@ -7,13 +7,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
     @Value("${application.security.jwt.secret-key}")
-    private final String secret_key;
+    private  String secret_key;
     @Value("${application.security.jwt.expiration}")
-    private final Long expiration;
+    private  Long expiration;
     @Override
     public String generateToken(UserDetails userDetails) {
         return "";

@@ -14,9 +14,7 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -29,12 +27,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @FieldNameConstants
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -58,8 +56,14 @@ public class User implements UserDetails {
     @AttributeOverride(name = "value", column = @Column(name = "c_password"))
     private Password password;
 
-  @Convert(converter = RoleNameConverter.class)
-    private Set<RoleName> roles;
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "t_roles",
+            joinColumns = @JoinColumn(name = "c_user", referencedColumnName = "c_id")
+    )
+    @Builder.Default
+    private Set<RoleName> roles = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
