@@ -6,6 +6,7 @@ import com.example.SecurityTest.dto.refreshToken.RefreshTokenRequest;
 import com.example.SecurityTest.dto.refreshToken.RefreshTokenResponse;
 import com.example.SecurityTest.dto.register.RegisterRequest;
 import com.example.SecurityTest.service.AuthenticationService;
+import com.example.SecurityTest.service.JwtService;
 import com.example.SecurityTest.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     private final AuthenticationService service;
     private final RefreshTokenService tokenService;
+    private final JwtService jwtService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
+        var register = service.register(request);
+        jwtService.generateToken()
         return ResponseEntity.ok(service.register(request));
     }
 
