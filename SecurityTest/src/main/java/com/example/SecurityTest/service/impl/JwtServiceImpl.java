@@ -45,7 +45,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String extractUsername(String jwt) {
-        return "";
+        return null;
     }
 
     @Override
