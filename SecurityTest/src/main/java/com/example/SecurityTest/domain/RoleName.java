@@ -18,7 +18,7 @@ public enum RoleName {
             Set.of(READ, DELETE)
     );
 
-    private final Set<Scope> scopes;
+    private final Set<Scope>    scopes;
 
     public List<SimpleGrantedAuthority> authorities(){
         List<SimpleGrantedAuthority> authorities = new java.util.ArrayList<>(
