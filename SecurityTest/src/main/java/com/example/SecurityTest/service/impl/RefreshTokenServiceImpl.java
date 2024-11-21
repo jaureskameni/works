@@ -9,10 +9,14 @@ import com.example.SecurityTest.repository.RefreshTokenSpringRepository;
 import com.example.SecurityTest.repository.UserSpringRepository;
 import com.example.SecurityTest.service.JwtService;
 import com.example.SecurityTest.service.RefreshTokenService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 import java.time.Instant;
 import java.util.Base64;
@@ -28,6 +32,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final JwtService jwtService;
     @Value("${application.security.jwt.refresh-token.expiration}")
     private Long expiration;
+    @Value("${application.security.jwt.refresh-token.cookie-name}")
+    private String refreshTokenCookieName;
 
     @Override
     public RefreshToken generateRefreshToken(UserId id) {
@@ -65,6 +71,45 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .accessToken(jwt)
                 .refreshToken(request.getRefreshToken())
                 .tokenType(TokenType.BEARER.name())
+                .build();
+    }
+
+    @Override
+    public ResponseCookie generateRefreshTokenCookie(String jwt) {
+        return ResponseCookie
+                .from(refreshTokenCookieName, jwt)
+                .path("/")
+                .maxAge(expiration/1000)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .build();
+    }
+
+    @Override
+    public String getRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, refreshTokenCookieName);
+        if (cookie == null){
+            return null;
+        }
+        return cookie.getValue();
+    }
+
+    @Override
+    public void deleteByToken(String jwt) {
+        refreshTokenSpringRepository.findByToken(jwt)
+                .ifPresent(refreshTokenSpringRepository::delete);
+    }
+
+    @Override
+    public ResponseCookie getCleanRefreshTokenCookie() {
+        return ResponseCookie
+                .from(refreshTokenCookieName, "")
+                .path("/")
+                .maxAge(0)
+                .secure(true)
+                .httpOnly(true)
+                .sameSite("Strict")
                 .build();
     }
 }
